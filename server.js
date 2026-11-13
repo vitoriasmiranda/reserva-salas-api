@@ -4,6 +4,7 @@ const express = require('express');
 const pool = require('./db/pool');
 
 const app = express();
+app.use(express.json());
 const PORT = 3000;
 
 app.get('/hello', (req, res) => {
@@ -38,6 +39,34 @@ app.get('/salas/:id', async (req, res) => {
   } catch (erro) {
     console.error(erro);
     res.status(500).json({ erro: 'Erro ao buscar a sala' });
+  }
+});
+
+app.post('/salas', async (req, res) => {
+  const { nome, bloco, capacidade, tipo } = req.body;
+
+  if (!nome || !bloco || !capacidade || !tipo) {
+    return res.status(400).json({ erro: 'Nome, bloco, capacidade e tipo são obrigatórios' });
+  }
+
+  if (!Number.isInteger(capacidade) || capacidade <= 0) {
+    return res.status(400).json({ erro: 'A capacidade deve ser um número inteiro positivo' });
+  }
+
+  if (tipo !== 'sala' && tipo !== 'laboratorio') {
+    return res.status(400).json({ erro: "O tipo deve ser 'sala' ou 'laboratorio'" });
+  }
+
+  try {
+    const resultado = await pool.query(
+      'INSERT INTO salas (nome, bloco, capacidade, tipo) VALUES ($1, $2, $3, $4) RETURNING *',
+      [nome, bloco, capacidade, tipo]
+    );
+
+    res.status(201).json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao criar a sala' });
   }
 });
 
