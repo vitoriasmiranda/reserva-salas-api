@@ -25,4 +25,14 @@ async function buscarPorId(id) {
   return resultado.rows[0] || null;
 }
 
-module.exports = { listar, buscarPorId };
+async function criar({ sala_id, responsavel, data, hora_inicio, hora_fim, motivo }) {
+  const resultado = await pool.query(
+    `INSERT INTO reservas (sala_id, responsavel, data, hora_inicio, hora_fim, motivo)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING id`,
+    [sala_id, responsavel, data, hora_inicio, hora_fim, motivo || null]
+  );
+  return buscarPorId(resultado.rows[0].id);
+}
+
+module.exports = { listar, buscarPorId, criar };
