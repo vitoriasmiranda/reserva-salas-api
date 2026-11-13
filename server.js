@@ -7,6 +7,19 @@ const app = express();
 app.use(express.json());
 const PORT = 3000;
 
+function validarSala({ nome, bloco, capacidade, tipo }) {
+  if (!nome || !bloco || !capacidade || !tipo) {
+    return 'Nome, bloco, capacidade e tipo são obrigatórios';
+  }
+  if (!Number.isInteger(capacidade) || capacidade <= 0) {
+    return 'A capacidade deve ser um número inteiro positivo';
+  }
+  if (tipo !== 'sala' && tipo !== 'laboratorio') {
+    return "O tipo deve ser 'sala' ou 'laboratorio'";
+  }
+  return null;
+}
+
 app.get('/hello', (req, res) => {
   res.json({ mensagem: 'Olá! A API de reserva de salas está no ar.' });
 });
