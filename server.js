@@ -76,6 +76,37 @@ app.post('/salas', async (req, res) => {
   }
 });
 
+app.put('/salas/:id', async (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ erro: 'O id deve ser um número inteiro positivo' });
+  }
+
+  const erroValidacao = validarSala(req.body);
+  if (erroValidacao) {
+    return res.status(400).json({ erro: erroValidacao });
+  }
+
+  const { nome, bloco, capacidade, tipo } = req.body;
+
+  try {
+    const resultado = await pool.query(
+      'UPDATE salas SET nome = $1, bloco = $2, capacidade = $3, tipo = $4 WHERE id = $5 RETURNING *',
+      [nome, bloco, capacidade, tipo, id]
+    );
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: 'Sala não encontrada' });
+    }
+
+    res.json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao atualizar a sala' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
