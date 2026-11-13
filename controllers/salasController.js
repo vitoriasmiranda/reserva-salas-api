@@ -98,4 +98,4 @@ async function remover(req, res) {
   }
 }
 
-module.exports = { listar, buscarPorId, criar, atualizar, remover };
+module.exports = { listar, buscarPorId, criar, atualizar, remover};

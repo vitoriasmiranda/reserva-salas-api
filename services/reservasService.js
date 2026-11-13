@@ -35,4 +35,17 @@ async function criar({ sala_id, responsavel, data, hora_inicio, hora_fim, motivo
   return buscarPorId(resultado.rows[0].id);
 }
 
-module.exports = { listar, buscarPorId, criar };
+async function buscarConflito({ sala_id, data, hora_inicio, hora_fim }) {
+  const resultado = await pool.query(
+    `${SELECT_RESERVAS}
+     WHERE r.sala_id = $1
+       AND r.data = $2
+       AND r.hora_inicio < $4
+       AND r.hora_fim > $3
+     LIMIT 1`,
+    [sala_id, data, hora_inicio, hora_fim]
+  );
+  return resultado.rows[0] || null;
+}
+
+module.exports = { listar, buscarPorId, criar, buscarConflito };

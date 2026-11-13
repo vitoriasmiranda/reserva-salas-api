@@ -80,6 +80,14 @@ async function criar(req, res) {
       return res.status(404).json({ erro: 'Sala não encontrada' });
     }
 
+    const conflito = await reservasService.buscarConflito(req.body);
+    if (conflito) {
+      return res.status(409).json({
+        erro: `A sala já está reservada das ${conflito.hora_inicio} às ${conflito.hora_fim} nesse dia`,
+        conflito,
+      });
+    }
+
     const reserva = await reservasService.criar(req.body);
     res.status(201).json(reserva);
   } catch (erro) {
