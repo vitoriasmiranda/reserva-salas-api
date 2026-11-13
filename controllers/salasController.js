@@ -1,4 +1,5 @@
 const salasService = require('../services/salasService');
+const lerId = require('../utils/lerId');
 
 function validarSala({ nome, bloco, capacidade, tipo }) {
   if (!nome || !bloco || !capacidade || !tipo) {
@@ -11,11 +12,6 @@ function validarSala({ nome, bloco, capacidade, tipo }) {
     return "O tipo deve ser 'sala' ou 'laboratorio'";
   }
   return null;
-}
-
-function lerId(req) {
-  const id = Number(req.params.id);
-  return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 async function listar(req, res) {

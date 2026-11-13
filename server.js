@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const salasRoutes = require('./routes/salasRoutes');
+const reservasRoutes = require('./routes/reservasRoutes');
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +14,7 @@ app.get('/hello', (req, res) => {
 });
 
 app.use('/salas', salasRoutes);
+app.use('/reservas', reservasRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
